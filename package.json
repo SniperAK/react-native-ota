@@ -1,0 +1,24 @@
+{
+  "name": "react-native-ota",
+  "version": "0.0.1",
+  "description": "React Native dynamic bundle delivery via ota like code push",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SniperAK/react-native-ota.git"
+  },
+  "keywords": [
+    "react-native",
+    "code-push",
+    "ota"
+  ],
+  "author": "Alex Kang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SniperAK/react-native-ota/issues"
+  },
+  "homepage": "https://github.com/SniperAK/react-native-ota#readme"
+}
