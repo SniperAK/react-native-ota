@@ -1,6 +1,6 @@
 {
   "name": "react-native-ota",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React Native dynamic bundle delivery via ota like code push",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -74,12 +74,6 @@
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-      // "pre-commit": "yarn lint && yarn typescript"
-    }
   },
   "commitlint": {
     "extends": [
