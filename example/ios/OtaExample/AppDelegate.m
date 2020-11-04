@@ -11,7 +11,10 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
+//react-native-ota
+#import <Ota.h>
 #if DEBUG
+
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
 #import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
@@ -19,7 +22,6 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 
-#import <Ota.h>
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
   SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
@@ -29,6 +31,9 @@ static void InitializeFlipper(UIApplication *application) {
   [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
   [client start];
 }
+#else
+
+
 #endif
 
 @implementation AppDelegate
@@ -38,6 +43,9 @@ static void InitializeFlipper(UIApplication *application) {
   #if DEBUG
     InitializeFlipper(application);
   #endif
+
+  [Ota setAppId:@"react-native-ota-example" passphrase:@"OwOriaHIFKbFDFBmO9ERCsXW+zOeqlcVL6kfpuS9+Cvwb6GV1k84NN+UYWVbXczg3IN91SMPVaDkXCGMyRzOhQ==" provider:@"http://localhost:3000"];
+
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"OtaExample"
@@ -58,8 +66,7 @@ static void InitializeFlipper(UIApplication *application) {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 #else
-  return [Ota bundleURL];
-//  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  return [Ota sourceURLForBridge];
 #endif
 }
 

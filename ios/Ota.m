@@ -97,44 +97,36 @@ typedef BOOL(^UnarchiverCallback)(NSString *fileName);
 
 static NSString *_passphrase = nil;
 static NSString *_appId = nil;
-static NSString *_bundleServer = nil;
+static NSString *_provider = nil;
 
 @implementation Ota
 
-+ (void)setPassphrase:(NSString *)passphrase {
-  _passphrase = passphrase;
-}
-
-+ (NSString *)passphrase {
-  return _passphrase;
-}
-
-+ (void)setAppId:(NSString *)appId {
++ (void)setAppId:(NSString *)appId passphrase:(NSString *)passphrase provider:(NSString *)provider
+{
   _appId = appId;
+  _passphrase = passphrase;
+  _provider = provider;
 }
 
-+ (NSString *)appId {
++ (NSString *)appId{
   return _appId;
 }
-
-+ (void)setBundleServer:(NSString *)bundleServer {
-  _bundleServer = bundleServer;
++ (NSString *)passphrase{
+  return _passphrase;
 }
-
-+ (NSString *)bundleServer {
-  return _bundleServer;
++ (NSString *)provider{
+  return _provider;
 }
 
 + (NSString *)appVersion {
-  return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-}
-
-+ (NSString *)urlParams {
-  return [NSString stringWithFormat:@"/index.bundle?platform=ios&app_ver=%@&appId=%@",self.appVersion, self.appId];
+  return [NSString stringWithFormat:@"%@.%@",
+    [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
+    [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]
+  ];
 }
 
 + (NSString *)pathForDefaultBundle {
-  return [[NSBundle mainBundle] pathForResource:[PATH_BUNDLE stringByAppendingPathComponent:PATH_BUNDLE_DEFAULT] ofType:nil];
+  return [[NSBundle mainBundle] pathForResource:PATH_BUNDLE_DEFAULT ofType:nil];
 }
 
 + (NSString *)path {
@@ -190,21 +182,6 @@ static NSString *_bundleServer = nil;
   }
   
   return YES;
-}
-
-+ (NSString *)bundleServerHost {
-#ifdef DEBUG
-  NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-  NSString *host = [defaults stringForKey:KEY_BUNDLE_DOWNLOAD_URL];
-  if( host == nil || [host stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceCharacterSet].length == 0 ){
-    [defaults setObject:self.bundleServer forKey:KEY_BUNDLE_DOWNLOAD_URL];
-    [defaults synchronize];
-    host = self.bundleServer;
-  }
-  return host;
-#else
-  return self.bundleServer;
-#endif
 }
 
 + (NSString *)md5:(NSString *)path {
@@ -276,7 +253,7 @@ static NSString *_bundleServer = nil;
   }
 }
 
-+ (NSURL *)bundleURL {
++ (NSURL *)sourceURLForBridge {
   [self prepareLaunch];
   return [NSURL fileURLWithPath:self.pathForLocalJSCodeLocation];
 }
@@ -296,10 +273,11 @@ RCT_EXPORT_MODULE();
 - (NSDictionary *)constantsToExport {
   NSString * hash = self.class.lastHash;
   NSDictionary *constrains = @{
-    @"passphrase":self.class.passphrase,
-    @"hash":hash ? hash : [NSNull null],
-    @"path":self.class.path,
-    @"params":self.class.urlParams
+    @"appId"      : _appId,
+    @"provider"   : _provider,
+    @"passphrase" : _passphrase,
+    @"hash"       : hash ? hash : [NSNull null],
+    @"path"       : self.class.path
   };
   return constrains;
 }
@@ -318,10 +296,6 @@ RCT_EXPORT_METHOD(getLastHash:(RCTResponseSenderBlock)callback) {
 RCT_EXPORT_METHOD(setLastHash:(NSString *)hash finishCallback:(RCTResponseSenderBlock)callback) {
   self.class.hash = hash;
   callback(@[]);
-}
-
-RCT_EXPORT_METHOD(getSavedBundleDownloadURL:(RCTResponseSenderBlock)callback) {
-  callback(@[self.class.bundleServerHost]);
 }
 
 RCT_EXPORT_METHOD(setSavedBundleDownloadURL:(NSString *)url) {

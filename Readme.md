@@ -1,22 +1,49 @@
 # react-native-ota
 
-React Native dynamic bundle delivery via ota like code push
+To React Native ota protect and update ota module.  
+This module need to [react-native-ota-cli](https://github.com/sniperak/react-native-ota-cli).
 
-## Installation
+``` ⚠️ NOTE: This module is currently incomplete. ```  
 
-```sh
+# Getting started
+
+## Install
+
+```sh 
+npm install react-native-ota-cli -g
+
 npm install react-native-ota
 ```
 
-## Usage
+## Setup ( using react-native-ota-cli )
+
+> react natie ota cli can modify your code.
+
+- iOS
+  - project.proj
+  - AppDelegate.m
+- android
+  - app/build.gradle
+  - MainApplication.java 
+
+```sh 
+ota init;
+```
+
+## Setup ( Menually )
+
+### iOS
+
+
 
 ```js
 import Ota from "react-native-ota";
 
-// ...
-
-const result = await Ota.multiply(3, 7);
 ```
+
+
+## Deploy
+
 
 ## Contributing
 

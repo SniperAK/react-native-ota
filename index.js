@@ -54,7 +54,6 @@ class Bundler {
   synchronize(){
     return Promise.all([
       new Promise(r=>Ota.getLastHash(v=>r(this._lastHash=v))),
-      new Promise(r=>Ota.getSavedBundleDownloadURL(v=>r(this._bundleDownloadURL=v))),
     ])
   }
 

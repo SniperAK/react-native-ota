@@ -7,15 +7,9 @@ typedef void(^ErrorBlock)(NSError *error);
 
 @interface Ota : RCTEventEmitter <RCTBridgeModule>
 
-+ (NSURL *)bundleURL;
++ (void)setAppId:(NSString *)appId passphrase:(NSString *)passphrase provider:(NSString *)provider;
 
-+ (void)setPassphrase:(NSString *)passphrase;
-+ (void)setAppId:(NSString *)appId;
-+ (void)setBundleServer:(NSString *)bundleServer;
-+ (void)setDevPackageServer:(NSString *)devPackageServer;
-
-+ (NSString *)lastHash;
-
++ (NSURL *)sourceURLForBridge;
 
 @end
 

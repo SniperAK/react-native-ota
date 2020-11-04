@@ -17,9 +17,6 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm}"
   s.dependency 'React-Core'
   s.dependency 'SSZipArchive', '~> 2.2.2'
-  s.dependency 'JWT', '~> 3.0.0-beta.12'
-  s.dependency 'Base64', '~> 1.1'
-  
-
   s.dependency "React"
+
 end

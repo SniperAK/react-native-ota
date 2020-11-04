@@ -1,6 +1,6 @@
 {
   "name": "react-native-ota",
-  "version": "0.1.0",
+  "version": "0.0.2",
   "description": "React Native dynamic bundle delivery via ota like code push",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -65,7 +65,8 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "crypto-js": "^3.1.9-1"
+    "crypto-js": "^3.1.9-1",
+    "rn-fetch-blob": "^0.12.0"
   },
   "jest": {
     "preset": "react-native",
@@ -76,8 +77,8 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn typescript"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      // "pre-commit": "yarn lint && yarn typescript"
     }
   },
   "commitlint": {
@@ -120,7 +121,10 @@
       ]
     }
   },
-  "eslintIgnore": ["node_modules/", "lib/"],
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
   "prettier": {
     "quoteProps": "consistent",
     "singleQuote": true,
@@ -131,6 +135,15 @@
   "@react-native-community/bob": {
     "source": "src",
     "output": "lib",
-    "targets": ["commonjs", "module", "typescript"]
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "rn-fetch-blob": "^0.12.0"
   }
 }

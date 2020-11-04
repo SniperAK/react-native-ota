@@ -1,5 +1,4 @@
 PODS:
-  - Base64 (1.1.2)
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.4)
   - CocoaLibEvent (1.0.0)
@@ -68,8 +67,6 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - JWT (3.0.0-beta.12):
-    - Base64 (~> 1.1.2)
   - OpenSSL-Universal (1.0.2.19):
     - OpenSSL-Universal/Static (= 1.0.2.19)
   - OpenSSL-Universal/Static (1.0.2.19)
@@ -237,8 +234,6 @@ PODS:
     - React-jsi (= 0.62.2)
   - React-jsinspector (0.62.2)
   - react-native-ota (0.1.0):
-    - Base64 (~> 1.1)
-    - JWT (~> 3.0.0-beta.12)
     - React
     - React-Core
     - SSZipArchive (~> 2.2.2)
@@ -344,7 +339,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Base64
     - boost-for-react-native
     - CocoaAsyncSocket
     - CocoaLibEvent
@@ -355,7 +349,6 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - Flipper-RSocket
     - FlipperKit
-    - JWT
     - OpenSSL-Universal
     - SSZipArchive
     - YogaKit
@@ -415,7 +408,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
@@ -431,7 +423,6 @@ SPEC CHECKSUMS:
   FlipperKit: 6dc9b8f4ef60d9e5ded7f0264db299c91f18832e
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  JWT: 9b5c05abbcc1a0e69c3c91e1655b3387fc7e581d
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
   RCTRequired: cec6a34b3ac8a9915c37e7e4ad3aa74726ce4035
   RCTTypeSafety: 93006131180074cffa227a1075802c89a49dd4ce
@@ -442,7 +433,7 @@ SPEC CHECKSUMS:
   React-jsi: b6dc94a6a12ff98e8877287a0b7620d365201161
   React-jsiexecutor: 1540d1c01bb493ae3124ed83351b1b6a155db7da
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
-  react-native-ota: 4d712533bbbedf81659854c400e323524e2334f3
+  react-native-ota: dafbab78accde7a84cb61168b4ddeb4e459c35a0
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
   React-RCTBlob: a332773f0ebc413a0ce85942a55b064471587a71

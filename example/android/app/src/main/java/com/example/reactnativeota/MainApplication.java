@@ -9,14 +9,29 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
+import java.util.List;  
 
+import androidx.annotation.Nullable;
+import me.alexk.ota.OtaModule;
 import me.alexk.ota.OtaPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  private final ReactNativeHost mReactNativeHost =
+  /* OTA provider setting begin ( don't fix it menualy ) */
+  static private final String OTA_APP_ID     = "react-native-ota-example";
+  static private final String OTA_PASSPHRASE = "OwOriaHIFKbFDFBmO9ERCsXW+zOeqlcVL6kfpuS9+Cvwb6GV1k84NN+UYWVbXczg3IN91SMPVaDkXCGMyRzOhQ==";
+  static private final String OTA_PROVIDER   = "http://localhost:3000";
+  /* OTA provider setting end */
+
+private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
+        // react-native-ota module location
+        @Nullable
+        @Override
+        protected String getJSBundleFile() {
+          return OtaModule.getJSBundleFile();
+        }
+
         @Override
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
@@ -45,10 +60,12 @@ public class MainApplication extends Application implements ReactApplication {
   }
 
   @Override
-  public void onCreate() {
+  public void onCreate(){
+    OtaModule.init(this, OTA_APP_ID,OTA_PROVIDER, OTA_PASSPHRASE );
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager()); // Remove this line if you don't want Flipper enabled
+
   }
 
   /**

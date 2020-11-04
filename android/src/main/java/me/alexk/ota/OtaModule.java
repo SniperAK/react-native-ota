@@ -7,9 +7,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 
+import com.facebook.react.BuildConfig;
 import com.facebook.react.bridge.Callback;
 
 import com.facebook.react.bridge.Promise;
@@ -34,7 +36,7 @@ public class OtaModule extends ReactContextBaseJavaModule {
   private static final String JS_BUNDLE                 = "bundle/";
   private static final String JS_BUNDLE_ZIP_NAME        = "main.bundle";
   private static final String JS_BUNDLE_TEMP            = "__temp__";
-  private static final String JS_BUNDLE_FILE            = JS_BUNDLE + "main.jsbundle";
+  private static final String JS_BUNDLE_FILE            = "main.jsbundle";
 
   private static final String BUNDLE_URL_PARAMS         = "/index.bundle?platform=android";
 
@@ -44,12 +46,9 @@ public class OtaModule extends ReactContextBaseJavaModule {
   private static final String KEY_BUNDLE_HASH           = "bundle_hash";
   private static final String KEY_APP_VERSION           = "bundle_app_version";
 
-  private static boolean mIsDebug       = true;
   private static String mApplicationId  = null;
-  private static String mDefaultServer  = null;
-  private static String mPassPhase      = null;
-  private static Boolean mUseBundle     = false;
-  private static Boolean mUseDownload   = false;
+  private static String mProvider       = null;
+  private static String mPassphrase     = null;
 
   @SuppressLint("StaticFieldLeak")
   private static Context mContext = null;
@@ -101,46 +100,25 @@ public class OtaModule extends ReactContextBaseJavaModule {
 
   private static String getAppVersion(){
     try {
-      return mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionName;
+      PackageInfo packageInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
+      return packageInfo.versionName + "." + packageInfo.versionCode;
     } catch(PackageManager.NameNotFoundException e) {
       return "Failed to acquire app version !";
     }
   }
 
-  public static String getJsCodeLocation(){
-    return useBundle() ? pathForLocalJSCodeLocation() : null;
+  public static String getJSBundleFile(){
+    return !BuildConfig.DEBUG ? pathForLocalJSCodeLocation() : null;
   }
 
-  public static void init( Context context, String appId, String defaultBundleServer, String passPhrase, boolean isDebug, boolean useBundle, boolean useDownload) {
+  public static void init( Context context, String appId, String server, String passphrase ) {
     mContext        = context;
-    mIsDebug        = isDebug;
     mApplicationId  = appId;
-    mDefaultServer  = defaultBundleServer;
-    mPassPhase      = passPhrase;
-    mUseBundle      = useBundle;
-    mUseDownload    = useDownload;
+    mProvider       = server;
+    mPassphrase     = passphrase;
 
-    if( !useBundle() ) {
+    if( BuildConfig.DEBUG ) {
       return;
-    }
-
-    String hash = getLastBundleHash();
-
-    if( hash != null ) {
-      unzip( internalPath( hash ), path(), false );
-    }
-    else {
-      String oldHash    = getString( KEY_BUNDLE_HASH, "" );
-      if( oldHash != null ) {
-        File oldBundleFile = new File( internalPath( oldHash ));
-        if( oldBundleFile.exists() ) {
-          oldBundleFile.delete();
-        }
-      }
-
-      hash = copyFromAssetFile( JS_BUNDLE + JS_BUNDLE_ZIP_NAME );
-      unzip( internalPath( hash ), path(), true );
-      setLastBundleHash( hash );
     }
   }
 
@@ -259,7 +237,7 @@ public class OtaModule extends ReactContextBaseJavaModule {
     try {
       ZipFile zipFile = new ZipFile( zipPath );
       if( zipFile.isEncrypted() ) {
-        zipFile.setPassword( mPassPhase );
+        zipFile.setPassword( mPassphrase );
       }
       if( isFull ) {
         zipFile.extractAll(destination);
@@ -271,18 +249,30 @@ public class OtaModule extends ReactContextBaseJavaModule {
   }
 
   private static String pathForLocalJSCodeLocation() {
+    String hash = getLastBundleHash();
+
+    if( hash != null ) {
+      unzip( internalPath( hash ), path(), false );
+    }
+    else {
+      String oldHash    = getString( KEY_BUNDLE_HASH, "" );
+      if( oldHash != null ) {
+        File oldBundleFile = new File( internalPath( oldHash ));
+        if( oldBundleFile.exists() ) {
+          oldBundleFile.delete();
+        }
+      }
+
+      hash = copyFromAssetFile( JS_BUNDLE + JS_BUNDLE_ZIP_NAME );
+      unzip( internalPath( hash ), path(), true );
+      setLastBundleHash( hash );
+    }
+
     String path = internalPath( JS_BUNDLE_FILE );
     File file = new File( path );
     return file.exists() ? path : null;
   }
 
-  private static boolean useBundle() {
-    return getBoolean( KEY_USE_BUNDLE, mUseBundle );
-  }
-
-  private static boolean useDownload() {
-    return getBoolean( KEY_USE_DOWNLOAD, mUseDownload );
-  }
 
   /************************
    * React Native Methods *
@@ -296,12 +286,12 @@ public class OtaModule extends ReactContextBaseJavaModule {
   @Override
   public Map<String, Object> getConstants() {
     Map<String, Object> constants = new HashMap<>();
-    constants.put( "passphrase", mPassPhase );
-    constants.put( "useBundle", useBundle() );
-    constants.put( "useDownload", useDownload() );
+    constants.put( "appId", mApplicationId);
+    constants.put( "passphrase", mPassphrase );
+    constants.put( "provider", mProvider );
+    constants.put( "appVersion", getAppVersion() );
     constants.put( "hash", getLastBundleHash());
     constants.put( "path", path() );
-    constants.put( "params", BUNDLE_URL_PARAMS + "&dev="+ mIsDebug + "&appId=" + mApplicationId + "&app_ver=" + getAppVersion() );
     return constants;
   }
 
@@ -328,42 +318,13 @@ public class OtaModule extends ReactContextBaseJavaModule {
     callback.invoke();
   }
 
-  @ReactMethod
-  public void getUseBundle( Callback callback ) {
-    callback.invoke( useBundle() );
-  }
-
-  @ReactMethod
-  public void setUseBundle( Boolean useBundle ) {
-    saveSharedData( KEY_USE_BUNDLE, useBundle );
-  }
-
-  @ReactMethod
-  public void getUseDownload( Callback callback ) {
-    callback.invoke( useDownload() );
-  }
-
-  @ReactMethod
-  public void setUseDownload( Boolean useDownload ) {
-    saveSharedData( KEY_USE_DOWNLOAD, useDownload );
-  }
-
-  @ReactMethod
-  public void getSavedBundleDownloadURL( Callback callback ){
-    callback.invoke( getString( KEY_BUNDLE_DOWNLOAD_URL, mDefaultServer ) );
-  }
-
-  @ReactMethod
-  public void setSavedBundleDownloadURL( String url ){
-    saveSharedData( KEY_BUNDLE_DOWNLOAD_URL, url );
-  }
 
   @ReactMethod
   public void unzip( final String zipPath, final String destination, final boolean isFull, final Promise promise) {
     try {
       ZipFile zipFile = new ZipFile( zipPath );
       if( zipFile.isEncrypted() ) {
-        zipFile.setPassword( mPassPhase );
+        zipFile.setPassword( mPassphrase );
       }
 
       if( isFull ) {
